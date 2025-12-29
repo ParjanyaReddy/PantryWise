@@ -1,0 +1,79 @@
+<!-- templates/recipes.html -->
+<!-- Premium Recipe Browser -->
+
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Page Header -->
+<div class="pw-page-header animate-fade-in">
+  <div class="pw-header-content">
+    <span class="pw-header-icon">📖</span>
+    <div>
+      <h1>Recipe Library</h1>
+      <p>Discover delicious recipes you can make</p>
+    </div>
+  </div>
+</div>
+
+<!-- Search Form -->
+<div class="pw-card pw-card-form animate-fade-in" style="--delay: 0.1s">
+  <form method="get" class="pw-search-form">
+    <div class="pw-search-row">
+      <div class="pw-search-input-wrapper">
+        <span class="pw-search-icon">🔍</span>
+        <input type="text" name="q" value="{{ q }}" class="pw-search-input"
+          placeholder="Search recipes by title, ingredient, or tag...">
+      </div>
+      <div class="pw-search-tag">
+        <input type="text" name="tag" value="{{ tag }}" class="pw-input" placeholder="Filter by tag">
+      </div>
+      <button type="submit" class="pw-btn-primary">
+        <span>Search</span>
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- Recipe Grid -->
+<div class="pw-recipes-grid">
+  {% for r in recipes %}
+  <a href="{{ url_for('recipe_detail', recipe_id=r.id) }}" class="pw-recipe-card animate-pop"
+    style="--delay: {{ loop.index * 0.1 }}s">
+    <div class="pw-recipe-card-header">
+      <span class="pw-recipe-emoji">🍳</span>
+      <div
+        class="pw-match-badge {{ 'pw-match-high' if r.match_pct >= 70 else 'pw-match-medium' if r.match_pct >= 40 else 'pw-match-low' }}">
+        {{ r.match_pct }}%
+      </div>
+    </div>
+    <h3 class="pw-recipe-card-title">{{ r.title }}</h3>
+    {% if r.description %}
+    <p class="pw-recipe-card-desc">{{ r.description[:80] }}{% if r.description|length > 80 %}...{% endif %}</p>
+    {% endif %}
+    <div class="pw-recipe-card-footer">
+      <span class="pw-recipe-cta">View Recipe →</span>
+    </div>
+  </a>
+  {% else %}
+  <div class="pw-empty-state pw-full-width animate-fade-in">
+    <span class="pw-empty-icon">🔍</span>
+    <h3>No recipes found</h3>
+    <p>Try a different search or add your own recipes!</p>
+    <a href="{{ url_for('add_recipe') }}" class="pw-btn-primary">Add Recipe</a>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Quick Links -->
+<div class="pw-quick-links animate-fade-in" style="--delay: 0.5s">
+  <a href="{{ url_for('add_recipe') }}" class="pw-quick-link">
+    <span>➕</span>
+    <span>Add New Recipe</span>
+  </a>
+  <a href="{{ url_for('recipe_generator') }}" class="pw-quick-link pw-quick-highlight">
+    <span>✨</span>
+    <span>AI Recipe Generator</span>
+  </a>
+</div>
+
+{% endblock %}

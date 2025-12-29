@@ -1,0 +1,20 @@
+<!-- templates/add_recipe.html -->
+<!-- Add user recipe form -->
+
+{% extends "base.html" %} <!-- base -->
+{% block content %} <!-- block -->
+<h1>Add Recipe</h1> <!-- heading -->
+<form method="post" class="card form"> <!-- form -->
+  <label>Title</label> <!-- label -->
+  <input type="text" name="title" required> <!-- field -->
+  <label>Description</label> <!-- label -->
+  <textarea name="description" rows="2"></textarea> <!-- textarea -->
+  <label>Tags (comma-separated e.g., vegetarian, high-protein)</label> <!-- label -->
+  <input type="text" name="tags"> <!-- tags -->
+  <label>Steps (Markdown)</label> <!-- label -->
+  <textarea name="steps" rows="6"></textarea> <!-- steps -->
+  <label>Ingredients (one per line: name|amount|unit)</label> <!-- label -->
+  <textarea name="ingredients" rows="6" placeholder="Eggs|3|pcs&#10;Milk|250|ml"></textarea> <!-- lines -->
+  <button type="submit">Save</button> <!-- submit -->
+</form> <!-- form end -->
+{% endblock %} <!-- block end -->

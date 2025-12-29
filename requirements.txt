@@ -1,0 +1,13 @@
+# requirements.txt
+# flask is the micro web framework used for building the app
+Flask==3.0.0
+# python-dotenv helps load environment variables from a .env file (optional but handy)
+python-dotenv==1.0.1
+# mysql-connector-python is the official MySQL driver used for DB connectivity
+mysql-connector-python==9.0.0
+# werkzeug provides password hashing utilities and secure sessions middleware
+Werkzeug==3.0.3
+# markdown to render recipe steps (user-provided) safely to HTML
+Markdown==3.6
+# google-generativeai for Gemini API integration (recipe generator)
+google-generativeai==0.8.3

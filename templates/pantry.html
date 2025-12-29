@@ -1,0 +1,113 @@
+<!-- templates/pantry.html -->
+<!-- Premium Pantry Management -->
+
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Page Header -->
+<div class="pw-page-header animate-fade-in">
+  <div class="pw-header-content">
+    <span class="pw-header-icon">📦</span>
+    <div>
+      <h1>Your Pantry</h1>
+      <p>Keep track of everything in your kitchen</p>
+    </div>
+  </div>
+  <div class="pw-header-stats">
+    <span class="pw-stat-pill">{{ items|length if items else 0 }} items</span>
+  </div>
+</div>
+
+<!-- Add Item Form -->
+<div class="pw-card pw-card-form animate-fade-in" style="--delay: 0.1s">
+  <form method="post" class="pw-inline-form">
+    <div class="pw-form-header">
+      <span class="pw-form-icon">➕</span>
+      <h2>Add New Item</h2>
+    </div>
+    <div class="pw-form-row">
+      <div class="pw-form-group pw-flex-2">
+        <label class="pw-label">Item Name</label>
+        <input type="text" name="item_name" class="pw-input" placeholder="e.g., Eggs, Milk, Bread" required>
+      </div>
+      <div class="pw-form-group">
+        <label class="pw-label">Quantity</label>
+        <input type="number" step="0.01" name="quantity" class="pw-input" placeholder="1" required>
+      </div>
+      <div class="pw-form-group">
+        <label class="pw-label">Unit</label>
+        <input type="text" name="unit" class="pw-input" placeholder="pcs, kg, ml...">
+      </div>
+      <div class="pw-form-group">
+        <label class="pw-label">Expires On</label>
+        <input type="date" name="expires_on" class="pw-input">
+      </div>
+      <div class="pw-form-group pw-form-submit">
+        <button type="submit" class="pw-btn-primary">
+          <span>Add Item</span>
+          <span class="pw-btn-icon">+</span>
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- Pantry Items Table -->
+<div class="pw-card animate-fade-in" style="--delay: 0.2s">
+  <div class="pw-card-header">
+    <span class="pw-card-icon">🗃️</span>
+    <h2>Your Items</h2>
+  </div>
+
+  {% if items %}
+  <div class="pw-table-container">
+    <table class="pw-table">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Quantity</th>
+          <th>Unit</th>
+          <th>Expires</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for it in items %}
+        <tr class="pw-table-row animate-slide-left" style="--delay: {{ loop.index * 0.05 }}s">
+          <td class="pw-item-name">
+            <span class="pw-item-icon">🍎</span>
+            {{ it.item_name }}
+          </td>
+          <td>
+            <form method="post" action="{{ url_for('pantry_edit', item_id=it.id) }}" class="pw-inline-edit">
+              <input type="number" step="0.01" name="quantity" value="{{ it.quantity }}" class="pw-input-sm">
+          </td>
+          <td>
+            <input type="text" name="unit" value="{{ it.unit or '' }}" class="pw-input-sm" placeholder="-">
+          </td>
+          <td>
+            <input type="date" name="expires_on" value="{{ it.expires_on }}" class="pw-input-sm">
+          </td>
+          <td class="pw-actions">
+            <button type="submit" class="pw-btn-icon-sm pw-btn-success" title="Save">💾</button>
+            </form>
+            <form method="post" action="{{ url_for('pantry_delete', item_id=it.id) }}" class="pw-inline"
+              onsubmit="return confirm('Delete {{ it.item_name }}?')">
+              <button type="submit" class="pw-btn-icon-sm pw-btn-danger" title="Delete">🗑️</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="pw-empty-state">
+    <span class="pw-empty-icon">📭</span>
+    <h3>Your pantry is empty</h3>
+    <p>Start adding items using the form above!</p>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

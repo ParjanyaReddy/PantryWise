@@ -1,0 +1,275 @@
+<!-- templates/recipe_generator.html -->
+<!-- AI-powered Recipe Generator page with premium UI -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Hero Section with animated gradient background -->
+<div class="rg-hero">
+    <div class="rg-hero-content">
+        <div class="rg-icon-wrapper">
+            <span class="rg-icon">🍳</span>
+            <div class="rg-icon-ring"></div>
+            <div class="rg-icon-ring rg-icon-ring-2"></div>
+        </div>
+        <h1 class="rg-title">AI Recipe Generator</h1>
+        <p class="rg-subtitle">Transform your ingredients into culinary masterpieces with AI-powered suggestions</p>
+    </div>
+    <div class="rg-hero-particles">
+        <span class="particle">🥕</span>
+        <span class="particle">🍅</span>
+        <span class="particle">🧄</span>
+        <span class="particle">🌿</span>
+        <span class="particle">🍋</span>
+    </div>
+</div>
+
+<!-- Error message display -->
+{% if error %}
+<div class="rg-error animate-shake">
+    <span class="rg-error-icon">⚠️</span>
+    <span>{{ error }}</span>
+</div>
+{% endif %}
+
+<!-- ===== RECIPE DETAILS VIEW ===== -->
+{% if recipe_details %}
+<div class="rg-detail-container animate-fade-in">
+    <div class="rg-detail-card glass-card">
+        <!-- Header with gradient accent -->
+        <div class="rg-detail-header">
+            <div class="rg-detail-accent"></div>
+            <h2 class="rg-detail-title">{{ recipe_details.name }}</h2>
+            <p class="rg-detail-desc">{{ recipe_details.description }}</p>
+
+            <div class="rg-meta-grid">
+                <div class="rg-meta-item animate-pop" style="--delay: 0.1s">
+                    <span class="rg-meta-icon">⏱️</span>
+                    <span class="rg-meta-label">Prep Time</span>
+                    <span class="rg-meta-value">{{ recipe_details.prep_time }}</span>
+                </div>
+                <div class="rg-meta-item animate-pop" style="--delay: 0.2s">
+                    <span class="rg-meta-icon">🍳</span>
+                    <span class="rg-meta-label">Cook Time</span>
+                    <span class="rg-meta-value">{{ recipe_details.cook_time }}</span>
+                </div>
+                <div class="rg-meta-item animate-pop" style="--delay: 0.3s">
+                    <span class="rg-meta-icon">👥</span>
+                    <span class="rg-meta-label">Servings</span>
+                    <span class="rg-meta-value">{{ recipe_details.servings }}</span>
+                </div>
+                <div class="rg-meta-item animate-pop" style="--delay: 0.4s">
+                    <span class="rg-meta-icon">📊</span>
+                    <span class="rg-meta-label">Difficulty</span>
+                    <span class="rg-meta-value rg-difficulty-{{ recipe_details.difficulty|lower }}">{{
+                        recipe_details.difficulty }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="rg-detail-grid">
+            <!-- Ingredients Section -->
+            <div class="rg-section rg-ingredients animate-slide-left">
+                <div class="rg-section-header">
+                    <span class="rg-section-icon">📝</span>
+                    <h3>Ingredients</h3>
+                </div>
+                <ul class="rg-ingredient-list">
+                    {% for ing in recipe_details.ingredients %}
+                    <li class="rg-ingredient-item" style="--delay: {{ loop.index * 0.05 }}s">
+                        <span class="rg-ingredient-check">✓</span>
+                        <span class="rg-ingredient-amount">{{ ing.amount }}</span>
+                        <span class="rg-ingredient-name">{{ ing.item }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Instructions Section -->
+            <div class="rg-section rg-instructions animate-slide-right">
+                <div class="rg-section-header">
+                    <span class="rg-section-icon">👨‍🍳</span>
+                    <h3>Instructions</h3>
+                </div>
+                <ol class="rg-steps-list">
+                    {% for step in recipe_details.steps %}
+                    <li class="rg-step-item" style="--delay: {{ loop.index * 0.1 }}s">
+                        <span class="rg-step-number">{{ loop.index }}</span>
+                        <span class="rg-step-text">{{ step }}</span>
+                    </li>
+                    {% endfor %}
+                </ol>
+            </div>
+        </div>
+
+        {% if recipe_details.tips %}
+        <!-- Tips Section -->
+        <div class="rg-tips animate-fade-in" style="--delay: 0.5s">
+            <div class="rg-tips-glow"></div>
+            <span class="rg-tips-icon">💡</span>
+            <div class="rg-tips-content">
+                <h4>Pro Tip</h4>
+                <p>{{ recipe_details.tips }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Actions -->
+        <div class="rg-actions">
+            <a href="{{ url_for('recipe_generator') }}" class="rg-btn rg-btn-secondary">
+                <span class="rg-btn-icon">←</span>
+                Generate New Recipes
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- ===== RECIPE SELECTION VIEW ===== -->
+{% elif recipes %}
+<div class="rg-selection-container animate-fade-in">
+    <div class="rg-selection-header">
+        <h2>Choose Your Recipe</h2>
+        <p class="muted">We crafted 3 delicious options based on your ingredients. Select one to explore!</p>
+    </div>
+
+    <div class="rg-cards-grid">
+        {% for recipe in recipes %}
+        <form action="{{ url_for('recipe_generator_details') }}" method="POST" class="rg-card-form">
+            <input type="hidden" name="recipe_name" value="{{ recipe.name }}">
+            <button type="submit" class="rg-recipe-card glass-card animate-pop"
+                style="--delay: {{ loop.index * 0.15 }}s">
+                <div class="rg-card-glow"></div>
+                <div class="rg-card-number">{{ loop.index }}</div>
+                <h3 class="rg-card-title">{{ recipe.name }}</h3>
+                <p class="rg-card-desc">{{ recipe.description }}</p>
+                <div class="rg-card-meta">
+                    <span class="rg-card-time">
+                        <span class="icon">⏱️</span> {{ recipe.time }}
+                    </span>
+                    <span class="rg-card-difficulty rg-difficulty-{{ recipe.difficulty|lower }}">
+                        {{ recipe.difficulty }}
+                    </span>
+                </div>
+                <div class="rg-card-action">
+                    <span class="rg-card-action-text">View Full Recipe</span>
+                    <span class="rg-card-arrow">→</span>
+                </div>
+            </button>
+        </form>
+        {% endfor %}
+    </div>
+
+    <div class="rg-selection-footer">
+        <a href="{{ url_for('recipe_generator') }}" class="rg-btn rg-btn-ghost">
+            <span class="rg-btn-icon">↻</span>
+            Start Over with Different Ingredients
+        </a>
+    </div>
+</div>
+
+<!-- ===== INPUT FORM VIEW ===== -->
+{% else %}
+<div class="rg-input-container animate-fade-in">
+    <div class="rg-input-card glass-card">
+        <form method="POST" class="rg-form">
+            <input type="hidden" name="action" value="generate">
+
+            <div class="rg-input-header">
+                <h2>What's in Your Kitchen?</h2>
+                <p>List your available ingredients and watch the magic happen</p>
+            </div>
+
+            <div class="rg-textarea-wrapper">
+                <textarea id="ingredients" name="ingredients" class="rg-textarea" rows="6" placeholder="Enter your ingredients here...
+
+Example:
+chicken breast, rice, garlic
+onions, tomatoes, olive oil
+salt, pepper, herbs">{{ ingredients }}</textarea>
+                <div class="rg-textarea-glow"></div>
+            </div>
+
+            {% if pantry_list %}
+            <div class="rg-pantry-section animate-fade-in" style="--delay: 0.2s">
+                <button type="button" class="rg-pantry-btn" onclick="loadFromPantry()">
+                    <span class="rg-pantry-icon">📦</span>
+                    <span class="rg-pantry-text">
+                        <strong>Load from Pantry</strong>
+                        <small>{{ pantry_list|length }} items available</small>
+                    </span>
+                    <span class="rg-pantry-arrow">→</span>
+                </button>
+            </div>
+            {% endif %}
+
+            <button type="submit" class="rg-submit-btn">
+                <span class="rg-submit-bg"></span>
+                <span class="rg-submit-content">
+                    <span class="rg-submit-icon">✨</span>
+                    <span class="rg-submit-text">Generate 3 Recipe Ideas</span>
+                </span>
+                <span class="rg-submit-shimmer"></span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Feature highlights -->
+    <div class="rg-features">
+        <div class="rg-feature animate-pop" style="--delay: 0.3s">
+            <span class="rg-feature-icon">🤖</span>
+            <span class="rg-feature-text">Powered by Gemini AI</span>
+        </div>
+        <div class="rg-feature animate-pop" style="--delay: 0.4s">
+            <span class="rg-feature-icon">⚡</span>
+            <span class="rg-feature-text">Instant Results</span>
+        </div>
+        <div class="rg-feature animate-pop" style="--delay: 0.5s">
+            <span class="rg-feature-icon">🎯</span>
+            <span class="rg-feature-text">Personalized Recipes</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    function loadFromPantry() {
+        const pantryItems = {{ pantry_list | tojson | safe
+    }};
+    const textarea = document.getElementById('ingredients');
+    textarea.value = pantryItems.join(', ');
+    textarea.focus();
+    textarea.classList.add('rg-textarea-flash');
+    setTimeout(() => textarea.classList.remove('rg-textarea-flash'), 600);
+}
+
+    // Loading spinner on form submit
+    document.addEventListener('DOMContentLoaded', function () {
+        const forms = document.querySelectorAll('.rg-form, .rg-card-form');
+        forms.forEach(form => {
+            form.addEventListener('submit', function (e) {
+                const btn = form.querySelector('button[type="submit"], .rg-submit-btn, .rg-recipe-card');
+                if (btn) {
+                    btn.classList.add('rg-loading');
+                    btn.disabled = true;
+                    // Add loading overlay to page
+                    const overlay = document.createElement('div');
+                    overlay.className = 'rg-loading-overlay';
+                    overlay.innerHTML = `
+                    <div class="rg-spinner"></div>
+                    <p>AI is cooking up recipes...</p>
+                `;
+                    document.body.appendChild(overlay);
+                }
+            });
+        });
+    });
+
+    // Confirm delete actions
+    function confirmDelete(message) {
+        return confirm(message || 'Are you sure you want to delete this item?');
+    }
+</script>
+{% endif %}
+
+{% endblock %}

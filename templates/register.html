@@ -1,0 +1,76 @@
+<!-- templates/register.html -->
+<!-- Premium Register Page -->
+
+{% extends "base.html" %}
+{% block content %}
+
+<div class="pw-auth-container">
+  <!-- Decorative background -->
+  <div class="pw-auth-bg">
+    <div class="pw-auth-circle pw-auth-circle-1"></div>
+    <div class="pw-auth-circle pw-auth-circle-2"></div>
+    <div class="pw-auth-circle pw-auth-circle-3"></div>
+  </div>
+
+  <div class="pw-auth-card animate-pop">
+    <div class="pw-auth-header">
+      <span class="pw-auth-logo">🍽️</span>
+      <h1>Join PantryWise</h1>
+      <p>Create your free account today</p>
+    </div>
+
+    <form method="post" class="pw-auth-form">
+      <div class="pw-form-group">
+        <label class="pw-label">
+          <span class="pw-label-icon">👤</span>
+          Your Name
+        </label>
+        <input type="text" name="name" class="pw-input" placeholder="John Doe" required>
+      </div>
+
+      <div class="pw-form-group">
+        <label class="pw-label">
+          <span class="pw-label-icon">📧</span>
+          Email Address
+        </label>
+        <input type="email" name="email" class="pw-input" placeholder="you@example.com" required>
+      </div>
+
+      <div class="pw-form-group">
+        <label class="pw-label">
+          <span class="pw-label-icon">🔒</span>
+          Password
+        </label>
+        <input type="password" name="password" class="pw-input" placeholder="••••••••" required>
+      </div>
+
+      <button type="submit" class="pw-btn-primary pw-btn-full">
+        <span class="pw-btn-text">Create Account</span>
+        <span class="pw-btn-icon">→</span>
+      </button>
+    </form>
+
+    <div class="pw-auth-footer">
+      <p>Already have an account?</p>
+      <a href="{{ url_for('login') }}" class="pw-auth-link">Sign In →</a>
+    </div>
+  </div>
+
+  <!-- Benefits -->
+  <div class="pw-auth-features animate-fade-in" style="--delay: 0.3s">
+    <div class="pw-auth-feature">
+      <span>🆓</span>
+      <span>100% Free</span>
+    </div>
+    <div class="pw-auth-feature">
+      <span>🔐</span>
+      <span>Secure</span>
+    </div>
+    <div class="pw-auth-feature">
+      <span>⚡</span>
+      <span>Instant Setup</span>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

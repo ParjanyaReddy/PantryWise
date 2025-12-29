@@ -1,0 +1,111 @@
+<!-- templates/shopping.html -->
+<!-- Premium Shopping List -->
+
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Page Header -->
+<div class="pw-page-header animate-fade-in">
+  <div class="pw-header-content">
+    <span class="pw-header-icon">🛒</span>
+    <div>
+      <h1>Shopping List</h1>
+      <p>Plan your grocery runs efficiently</p>
+    </div>
+  </div>
+  <form method="post" class="pw-header-action">
+    <button name="action" value="move_to_pantry" type="submit" class="pw-btn-secondary">
+      <span>📦</span>
+      <span>Move Done to Pantry</span>
+    </button>
+  </form>
+</div>
+
+<!-- Add Item Form -->
+<div class="pw-card pw-card-form animate-fade-in" style="--delay: 0.1s">
+  <form method="post" class="pw-inline-form">
+    <div class="pw-form-header">
+      <span class="pw-form-icon">➕</span>
+      <h2>Add Item</h2>
+    </div>
+    <div class="pw-form-row">
+      <div class="pw-form-group pw-flex-2">
+        <label class="pw-label">Item Name</label>
+        <input type="text" name="item_name" class="pw-input" placeholder="What do you need to buy?" required>
+      </div>
+      <div class="pw-form-group">
+        <label class="pw-label">Quantity</label>
+        <input type="number" step="0.01" name="quantity" value="1" class="pw-input" required>
+      </div>
+      <div class="pw-form-group">
+        <label class="pw-label">Unit</label>
+        <input type="text" name="unit" class="pw-input" placeholder="g, ml, pcs...">
+      </div>
+      <div class="pw-form-group pw-form-submit">
+        <button type="submit" name="action" value="add_item" class="pw-btn-primary">
+          <span>Add</span>
+          <span class="pw-btn-icon">+</span>
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- Shopping List -->
+<div class="pw-card animate-fade-in" style="--delay: 0.2s">
+  <div class="pw-card-header">
+    <span class="pw-card-icon">📝</span>
+    <h2>Your List</h2>
+    <span class="pw-stat-pill">{{ items|length if items else 0 }} items</span>
+  </div>
+
+  {% if items %}
+  <ul class="pw-shopping-list">
+    {% for it in items %}
+    <li class="pw-shopping-item {{ 'pw-item-done' if it.done else '' }} animate-slide-left"
+      style="--delay: {{ loop.index * 0.05 }}s">
+      <form method="post" class="pw-check-form">
+        <input type="hidden" name="sid" value="{{ it.id }}">
+        <button name="action" value="toggle_done" type="submit"
+          class="pw-check-btn {{ 'pw-checked' if it.done else '' }}">
+          {{ '✓' if it.done else '' }}
+        </button>
+      </form>
+
+      <div class="pw-shopping-info {{ 'pw-strikethrough' if it.done else '' }}">
+        <span class="pw-shopping-name">{{ it.item_name }}</span>
+        <span class="pw-shopping-qty">{{ it.quantity }} {{ it.unit or '' }}</span>
+      </div>
+
+      <div class="pw-shopping-actions">
+        <form method="post" class="pw-inline">
+          <input type="hidden" name="sid" value="{{ it.id }}">
+          <button name="action" value="move_one" type="submit" class="pw-btn-sm pw-btn-success" title="Move to Pantry">
+            📦 Move
+          </button>
+        </form>
+        <form method="post" class="pw-inline" onsubmit="return confirm('Delete {{ it.item_name }}?')">
+          <input type="hidden" name="sid" value="{{ it.id }}">
+          <button name="action" value="delete_item" type="submit" class="pw-btn-sm pw-btn-danger" title="Delete">
+            🗑️
+          </button>
+        </form>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+
+  <div class="pw-card-tip">
+    <span class="pw-tip-icon">💡</span>
+    <span>Click the circle to mark items as done, then move them to your pantry!</span>
+  </div>
+  {% else %}
+  <div class="pw-empty-state">
+    <span class="pw-empty-icon">🎉</span>
+    <h3>Your list is empty</h3>
+    <p>Add items you need to buy using the form above.</p>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

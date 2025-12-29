@@ -1,0 +1,165 @@
+<!-- templates/base.html -->
+<!-- Premium Base Layout for PantryWise -->
+
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PantryWise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body class="pw-body">
+  <!-- Animated background gradient -->
+  <div class="pw-bg-gradient"></div>
+
+  <!-- Premium Header with glassmorphism -->
+  <header class="pw-header-premium">
+    <div class="pw-container pw-header-inner">
+      <a href="{{ url_for('home') }}" class="pw-brand">
+        <span class="pw-brand-icon">🍽️</span>
+        <span class="pw-brand-text">PantryWise</span>
+      </a>
+
+      {% if session.get('user_id') %}
+      <nav class="pw-nav-premium">
+        <a href="{{ url_for('home') }}" class="pw-nav-link">
+          <span class="pw-nav-icon">🏠</span>
+          <span>Home</span>
+        </a>
+        <a href="{{ url_for('pantry') }}" class="pw-nav-link">
+          <span class="pw-nav-icon">📦</span>
+          <span>Pantry</span>
+        </a>
+        <a href="{{ url_for('recipes') }}" class="pw-nav-link">
+          <span class="pw-nav-icon">📖</span>
+          <span>Recipes</span>
+        </a>
+        <a href="{{ url_for('shopping') }}" class="pw-nav-link">
+          <span class="pw-nav-icon">🛒</span>
+          <span>Shopping</span>
+        </a>
+        <a href="{{ url_for('favourites') }}" class="pw-nav-link">
+          <span class="pw-nav-icon">❤️</span>
+          <span>Favourites</span>
+        </a>
+        <a href="{{ url_for('recipe_generator') }}" class="pw-nav-link pw-nav-highlight">
+          <span class="pw-nav-icon">✨</span>
+          <span>AI Generator</span>
+        </a>
+        <a href="{{ url_for('logout') }}" class="pw-nav-link pw-nav-logout">
+          <span class="pw-nav-icon">🚪</span>
+          <span>Logout</span>
+        </a>
+      </nav>
+
+      <!-- Mobile menu toggle -->
+      <button class="pw-mobile-toggle" onclick="toggleMobileNav()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      {% endif %}
+    </div>
+  </header>
+
+  <!-- Main content with page transitions -->
+  <main class="pw-main pw-container pw-page-enter">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="pw-flash-container">
+      {% for category, message in messages %}
+      <div class="pw-flash pw-flash-{{ category }} pw-animate-slide-down">
+        <span class="pw-flash-icon">{% if category == 'success' %}✓{% else %}⚠{% endif %}</span>
+        <span>{{ message }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Premium Footer -->
+  <footer class="pw-footer-premium">
+    <div class="pw-container pw-footer-inner">
+      <div class="pw-footer-brand">
+        <span class="pw-footer-logo">🍽️</span>
+        <span>PantryWise</span>
+      </div>
+      <div class="pw-footer-text">
+        Built with ❤️ using Flask + MySQL + Gemini AI
+      </div>
+      <div class="pw-footer-links">
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('recipe_generator') }}">AI Generator</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Page load animation
+    document.addEventListener('DOMContentLoaded', function () {
+      document.body.classList.add('pw-loaded');
+
+      // Animate cards on scroll
+      const cards = document.querySelectorAll('.card, .pw-card');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+          if (entry.isIntersecting) {
+            entry.target.style.animationDelay = `${index * 0.1}s`;
+            entry.target.classList.add('pw-animate-in');
+          }
+        });
+      }, { threshold: 0.1 });
+
+      cards.forEach(card => observer.observe(card));
+
+      // Scroll reveal animations
+      const revealElements = document.querySelectorAll('.pw-scroll-reveal');
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('pw-revealed');
+          }
+        });
+      }, { threshold: 0.1 });
+
+      revealElements.forEach(el => revealObserver.observe(el));
+
+      // Add ripple effect to buttons
+      document.querySelectorAll('.pw-btn-ripple').forEach(button => {
+        button.addEventListener('click', function (e) {
+          const ripple = document.createElement('span');
+          const rect = this.getBoundingClientRect();
+          const size = Math.max(rect.width, rect.height);
+          const x = e.clientX - rect.left - size / 2;
+          const y = e.clientY - rect.top - size / 2;
+
+          ripple.style.width = ripple.style.height = size + 'px';
+          ripple.style.left = x + 'px';
+          ripple.style.top = y + 'px';
+          ripple.classList.add('ripple-effect');
+
+          this.appendChild(ripple);
+
+          setTimeout(() => ripple.remove(), 600);
+        });
+      });
+    });
+
+    // Mobile nav toggle
+    function toggleMobileNav() {
+      document.querySelector('.pw-nav-premium').classList.toggle('pw-nav-open');
+      document.querySelector('.pw-mobile-toggle').classList.toggle('pw-toggle-active');
+    }
+  </script>
+</body>
+
+</html>

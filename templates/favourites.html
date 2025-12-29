@@ -1,0 +1,76 @@
+<!-- templates/favourites.html -->
+<!-- Premium Favourites Gallery -->
+
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Page Header -->
+<div class="pw-page-header animate-fade-in">
+  <div class="pw-header-content">
+    <span class="pw-header-icon">❤️</span>
+    <div>
+      <h1>Your Favourites</h1>
+      <p>Quick access to your favorite recipes</p>
+    </div>
+  </div>
+  <div class="pw-header-stats">
+    <span class="pw-stat-pill">{{ favs|length if favs else 0 }} recipes</span>
+  </div>
+</div>
+
+<!-- Favourites Grid -->
+{% if favs %}
+<div class="pw-recipes-grid">
+  {% for f in favs %}
+  <a href="{{ url_for('recipe_detail', recipe_id=f.id) }}" class="pw-recipe-card pw-card-hover-lift animate-pop"
+    style="--delay: {{ loop.index * 0.1 }}s">
+    <div class="pw-recipe-card-header">
+      <span class="pw-recipe-emoji">🍳</span>
+      <span style="font-size: 28px; animation: heartBeat 1.5s ease-in-out infinite;">❤️</span>
+    </div>
+    <h3 class="pw-recipe-card-title">{{ f.title }}</h3>
+    {% if f.description %}
+    <p class="pw-recipe-card-desc">{{ f.description[:80] }}{% if f.description|length > 80 %}...{% endif %}</p>
+    {% endif %}
+    <div class="pw-recipe-card-footer">
+      <span class="pw-recipe-cta">View Recipe →</span>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+
+<style>
+  @keyframes heartBeat {
+
+    0%,
+    100% {
+      transform: scale(1);
+    }
+
+    10%,
+    30% {
+      transform: scale(1.1);
+    }
+
+    20%,
+    40% {
+      transform: scale(0.9);
+    }
+  }
+</style>
+
+{% else %}
+<div class="pw-card animate-fade-in" style="--delay: 0.1s">
+  <div class="pw-empty-state">
+    <span class="pw-empty-icon">💔</span>
+    <h3>No favourites yet</h3>
+    <p>Start adding recipes to your favourites to see them here!</p>
+    <a href="{{ url_for('recipes') }}" class="pw-btn-primary" style="margin-top: 16px;">
+      <span>Browse Recipes</span>
+      <span class="pw-btn-icon">→</span>
+    </a>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}

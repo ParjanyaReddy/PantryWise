@@ -1,0 +1,138 @@
+<!-- templates/home.html -->
+<!-- Premium Home Dashboard -->
+
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Welcome Hero -->
+<div class="pw-welcome-hero animate-fade-in">
+  <div class="pw-welcome-content">
+    <span class="pw-welcome-wave">👋</span>
+    <div class="pw-welcome-text">
+      <h1>Welcome back, <span class="pw-gradient-text">{{ session.get('user_name') }}</span>!</h1>
+      <p>Here's what's happening in your kitchen today</p>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="pw-stats-row">
+  <div class="pw-stat-card animate-pop" style="--delay: 0.1s">
+    <span class="pw-stat-icon">📦</span>
+    <div class="pw-stat-info">
+      <span class="pw-stat-number">{{ expiring|length if expiring else 0 }}</span>
+      <span class="pw-stat-label">Items Expiring Soon</span>
+    </div>
+  </div>
+  <div class="pw-stat-card animate-pop" style="--delay: 0.2s">
+    <span class="pw-stat-icon">📖</span>
+    <div class="pw-stat-info">
+      <span class="pw-stat-number">{{ recs|length if recs else 0 }}</span>
+      <span class="pw-stat-label">Recipe Matches</span>
+    </div>
+  </div>
+  <div class="pw-stat-card pw-stat-highlight animate-pop" style="--delay: 0.3s">
+    <span class="pw-stat-icon">✨</span>
+    <div class="pw-stat-info">
+      <span class="pw-stat-label">Try AI Generator</span>
+      <a href="{{ url_for('recipe_generator') }}" class="pw-stat-link">Generate Recipes →</a>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content Grid -->
+<section class="pw-dashboard-grid">
+  <!-- Expiring Items Card -->
+  <div class="pw-card pw-card-warning animate-fade-in" style="--delay: 0.2s">
+    <div class="pw-card-header">
+      <span class="pw-card-icon">⚠️</span>
+      <h2>Expiring Soon</h2>
+      <span class="pw-badge pw-badge-warning">≤ 5 days</span>
+    </div>
+    {% if expiring %}
+    <ul class="pw-expiry-list">
+      {% for it in expiring %}
+      <li class="pw-expiry-item animate-slide-left" style="--delay: {{ loop.index * 0.1 }}s">
+        <div class="pw-expiry-icon">🍎</div>
+        <div class="pw-expiry-info">
+          <strong>{{ it.item_name }}</strong>
+          <span class="pw-expiry-qty">{{ it.quantity }} {{ it.unit or '' }}</span>
+        </div>
+        <div class="pw-expiry-date">
+          {% if it.expires_on %}
+          <span class="pw-date-badge">{{ it.expires_on }}</span>
+          {% endif %}
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+    <div class="pw-card-tip">
+      <span class="pw-tip-icon">💡</span>
+      <span>Use these ingredients in your next recipe!</span>
+    </div>
+    {% else %}
+    <div class="pw-empty-state">
+      <span class="pw-empty-icon">🎉</span>
+      <p>No items expiring soon. Great job managing your pantry!</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Recommended Recipes Card -->
+  <div class="pw-card animate-fade-in" style="--delay: 0.3s">
+    <div class="pw-card-header">
+      <span class="pw-card-icon">🍳</span>
+      <h2>Recommended for You</h2>
+    </div>
+    {% if recs %}
+    <ul class="pw-recipe-list">
+      {% for r in recs %}
+      <li class="pw-recipe-item animate-slide-right" style="--delay: {{ loop.index * 0.1 }}s">
+        <a href="{{ url_for('recipe_detail', recipe_id=r.id) }}" class="pw-recipe-link">
+          <div class="pw-recipe-info">
+            <span class="pw-recipe-title">{{ r.title }}</span>
+          </div>
+          <div
+            class="pw-match-badge {{ 'pw-match-high' if r.match_pct >= 70 else 'pw-match-medium' if r.match_pct >= 40 else 'pw-match-low' }}">
+            {{ r.match_pct }}% match
+          </div>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+    <div class="pw-card-action">
+      <a href="{{ url_for('recipes') }}" class="pw-action-link">
+        View All Recipes <span>→</span>
+      </a>
+    </div>
+    {% else %}
+    <div class="pw-empty-state">
+      <span class="pw-empty-icon">📚</span>
+      <p>No recipes found. Add items to your pantry!</p>
+      <a href="{{ url_for('pantry') }}" class="pw-btn-sm">Go to Pantry</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- Quick Actions -->
+<div class="pw-quick-actions animate-fade-in" style="--delay: 0.5s">
+  <a href="{{ url_for('pantry') }}" class="pw-quick-btn">
+    <span class="pw-quick-icon">📦</span>
+    <span>Manage Pantry</span>
+  </a>
+  <a href="{{ url_for('shopping') }}" class="pw-quick-btn">
+    <span class="pw-quick-icon">🛒</span>
+    <span>Shopping List</span>
+  </a>
+  <a href="{{ url_for('add_recipe') }}" class="pw-quick-btn">
+    <span class="pw-quick-icon">➕</span>
+    <span>Add Recipe</span>
+  </a>
+  <a href="{{ url_for('recipe_generator') }}" class="pw-quick-btn pw-quick-highlight">
+    <span class="pw-quick-icon">✨</span>
+    <span>AI Generator</span>
+  </a>
+</div>
+
+{% endblock %}
