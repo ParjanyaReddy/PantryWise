@@ -197,7 +197,6 @@ def merge_into_pantry(uid: int, name: str, qty: float, unit: str | None, expires
 
 
 
-# route: register new account
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -218,7 +217,6 @@ def register():
         return redirect(url_for("home"))
     return render_template("register.html")
 
-# route: login
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -233,20 +231,18 @@ def login():
         return redirect(url_for("home"))
     return render_template("login.html")
 
-# route: logout
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for("login"))
 
-# route: home with expiry-first suggestions and recommendations
 @app.route("/")
 def home():
     need = require_login()
     if need:
         return need
     uid = session["user_id"]
-    expiring = query_all(  # expiry-first query
+    expiring = query_all(
         """
         SELECT item_name, quantity, unit, expires_on
         FROM pantry_items
@@ -257,7 +253,7 @@ def home():
         """,
         (uid,),
     )
-    recipes = query_all(  # get candidate recipes
+    recipes = query_all(
         "SELECT id, title FROM recipes ORDER BY id DESC LIMIT 50",
         (),
     )
@@ -268,7 +264,6 @@ def home():
     recs.sort(key=lambda x: x["match_pct"], reverse=True)
     return render_template("home.html", expiring=expiring, recs=recs[:10])
 
-# route: pantry view and add item
 @app.route("/pantry", methods=["GET", "POST"])
 def pantry():
     need = require_login()
@@ -301,7 +296,6 @@ def pantry():
     )
     return render_template("pantry.html", items=items)
 
-# route: delete pantry item
 @app.route("/pantry/delete/<int:item_id>", methods=["POST"])
 def pantry_delete(item_id: int):
     need = require_login()
@@ -311,7 +305,6 @@ def pantry_delete(item_id: int):
     flash("Item deleted.", "success")
     return redirect(url_for("pantry"))
 
-# route: edit pantry item (quantity/unit/expiry)
 @app.route("/pantry/edit/<int:item_id>", methods=["POST"])
 def pantry_edit(item_id: int):
     need = require_login()
@@ -327,7 +320,6 @@ def pantry_edit(item_id: int):
     flash("Item updated.", "success")
     return redirect(url_for("pantry"))
 
-# route: recipes search
 @app.route("/recipes")  # list/search recipes
 def recipes():
     need = require_login()
@@ -361,7 +353,6 @@ def recipes():
     annotated.sort(key=lambda x: x["match_pct"], reverse=True)
     return render_template("recipes.html", recipes=annotated, q=q, tag=tag)
 
-# route: recipe detail with have/missing and actions
 @app.route("/recipe/<int:recipe_id>", methods=["GET", "POST"])
 def recipe_detail(recipe_id: int):
     need = require_login()
@@ -369,7 +360,7 @@ def recipe_detail(recipe_id: int):
         return need
     if request.method == "POST":
         if request.form.get("action") == "add_missing":
-            # compute missing using helper
+          
             m = compute_recipe_match(recipe_id, session["user_id"])
             for item in m["missing"]:
                 execute(
@@ -380,7 +371,7 @@ def recipe_detail(recipe_id: int):
             return redirect(url_for("recipe_detail", recipe_id=recipe_id))
 
         if request.form.get("action") == "toggle_fav":
-            fav = query_one("SELECT 1 FROM favourites WHERE user_id=%s AND recipe_id=%s", (session["user_id"], recipe_id))  # exists?
+            fav = query_one("SELECT 1 FROM favourites WHERE user_id=%s AND recipe_id=%s", (session["user_id"], recipe_id))
             if fav:
                 execute("DELETE FROM favourites WHERE user_id=%s AND recipe_id=%s", (session["user_id"], recipe_id))
                 flash("Removed from favourites.", "success")
@@ -413,7 +404,6 @@ def recipe_detail(recipe_id: int):
         is_fav=bool(is_fav),
     )
 
-# route: shopping list view + actions
 @app.route("/shopping", methods=["GET", "POST"])
 def shopping():
     need = require_login()
@@ -500,7 +490,6 @@ def shopping():
     )
     return render_template("shopping.html", items=items)
 
-# route: favourites
 @app.route("/favourites")
 def favourites():
     need = require_login()
@@ -520,7 +509,6 @@ def favourites():
 
 
 
-# route: add user recipe (with markdown steps and ingredient lines)
 @app.route("/add-recipe", methods=["GET", "POST"])
 def add_recipe():
     need = require_login()
@@ -560,7 +548,6 @@ def add_recipe():
 
 
 
-# route: recipe generator using Gemini AI
 @app.route("/recipe-generator", methods=["GET", "POST"])
 def recipe_generator():
     need = require_login()
@@ -620,7 +607,6 @@ Example format:
         pantry_list=pantry_list,
     )
 
-# route: get full recipe details for selected recipe
 @app.route("/recipe-generator/details", methods=["POST"])
 def recipe_generator_details():
     need = require_login()
