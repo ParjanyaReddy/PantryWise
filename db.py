@@ -1,8 +1,3 @@
-# db.py
-# -----------------------------
-# Database connector with Connection Pooling
-# -----------------------------
-
 import os
 import mysql.connector
 from mysql.connector import pooling
