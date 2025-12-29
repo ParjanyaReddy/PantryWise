@@ -1,316 +1,176 @@
-# 🍳 PantryWise — Smart Recipe & Pantry Manager
+# PantryWise
 
-A **full-stack web application** built with Flask and MySQL to intelligently manage your pantry inventory, discover recipes based on available ingredients, auto-generate shopping lists, and plan weekly meals with AI assistance.
+A web app that helps you manage your pantry, find recipes based on what you have, and automatically build shopping lists. Built with Flask and MySQL.
 
-![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
-![Flask](https://img.shields.io/badge/Flask-3.0.0-green.svg)
-![MySQL](https://img.shields.io/badge/MySQL-8.0+-orange.svg)
-![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+## Why I Built This
 
----
+I got tired of forgetting what's in my pantry and letting food expire. This app tracks your ingredients, shows you recipes you can make with what you have, and helps plan meals around expiring items. It also generates shopping lists automatically when you find a recipe you want to make but are missing ingredients.
 
-## ✨ Features
+## Main Features
 
-### 🔐 **User Authentication**
-- Secure registration and login system
-- Password hashing with Werkzeug
-- Session-based authentication
-- Per-user data isolation
+**Pantry Management**
+- Track what you have, how much, and when it expires
+- Get alerts for items expiring in the next 5 days
+- Add, edit, or remove items easily
 
-### 🥫 **Smart Pantry Management**
-- Add, edit, and delete pantry items
-- Track quantity, unit, and expiration dates
-- **Expiry Alerts** - Get notified of items expiring within 5 days
-- Visual inventory tracking
+**Smart Recipe Search**
+- Search by title, ingredient, or tags
+- See which ingredients you have vs. what's missing
+- Get recipe recommendations ranked by how many ingredients you already have
+- One-click to add missing ingredients to your shopping list
 
-### 🔍 **Intelligent Recipe Search**
-- Search by title, ingredients, or tags
-- **Ingredient Matching** - See which ingredients you have vs. missing
-- **One-Click Shopping** - Add missing ingredients to shopping list instantly
-- Recipe recommendations ranked by ingredient match percentage
+**Shopping List**
+- Auto-generated from recipes you want to make
+- Mark items as purchased
+- Move purchased items directly to your pantry
 
-### 🛒 **Auto-Generated Shopping Lists**
-- Per-user shopping lists
-- Mark items as done/purchased
-- **Smart Pantry Integration** - Move purchased items to pantry automatically
-- Quantity aggregation for duplicate items
+**Meal Planning**
+- Weekly meal planner suggests recipes based on what you have
+- Prioritizes recipes that use expiring ingredients
+- Uses a greedy algorithm to minimize shopping needs
 
-### ⭐ **Personalization**
-- **Favorites** - Save your go-to recipes
-- **Recipe History** - Track when you used each recipe
-- **AI Recipe Generation** - Create custom recipes with Google Gemini AI
+**Extras**
+- Save favorite recipes
+- Track recipe history (when you last made something)
+- AI recipe generation using Google Gemini (optional)
 
-### 📅 **Meal Planning**
-- **Weekly Meal Planner** - Greedy algorithm suggests 5-7 recipes
-- Optimizes for fewest missing ingredients
-- Reduces food waste by prioritizing expiring items
+## Getting Started
 
-### 🎨 **Modern UI/UX**
-- Responsive design with smooth animations
-- Glassmorphism effects and gradient backgrounds
-- Micro-animations for enhanced user experience
-- Premium, professional aesthetic
+**Requirements:**
+- Python 3.8+
+- MySQL 8.0+
+- Google Gemini API key (optional, only for AI features)
 
----
+**Installation:**
 
-## 🚀 Installation & Setup
+```bash
+# Clone and navigate
+git clone https://github.com/ParjanyaReddy/PantryWise.git
+cd PantryWise
 
-### Prerequisites
-- Python 3.8 or higher
-- MySQL 8.0 or higher
-- pip (Python package manager)
-- Google Gemini API key (optional, for AI features)
+# Set up virtual environment
+python -m venv venv
+venv\Scripts\activate  # Windows
+# source venv/bin/activate  # Mac/Linux
 
-### Installation Steps
+# Install dependencies
+pip install -r requirements.txt
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/PantryWise.git
-   cd PantryWise
-   ```
+# Set up database
+mysql -u root -p
+CREATE DATABASE pantrywise;
+USE pantrywise;
+SOURCE schema.sql;
+exit;
 
-2. **Create a virtual environment**
-   ```bash
-   python -m venv venv
-   
-   # Windows
-   venv\Scripts\activate
-   
-   # macOS/Linux
-   source venv/bin/activate
-   ```
+# Configure environment
+# Copy .env.example to .env and fill in your details:
+# - Database credentials
+# - Flask secret key
+# - Gemini API key (optional)
 
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+# Run the app
+python app.py
+```
 
-4. **Set up MySQL database**
-   ```bash
-   # Log into MySQL
-   mysql -u root -p
-   
-   # Create database
-   CREATE DATABASE pantrywise;
-   USE pantrywise;
-   
-   # Import schema
-   SOURCE schema.sql;
-   ```
+Open `http://localhost:5000` and create an account to get started.
 
-5. **Configure environment variables**
-   ```bash
-   # Copy the example file
-   cp .env.example .env
-   
-   # Edit .env with your credentials
-   # DB_HOST=localhost
-   # DB_USER=your_mysql_username
-   # DB_PASSWORD=your_mysql_password
-   # DB_NAME=pantrywise
-   # SECRET_KEY=your-secret-key
-   # GEMINI_API_KEY=your-api-key (optional)
-   ```
+## How It Works
 
-6. **Run the application**
-   ```bash
-   python app.py
-   ```
+The app uses Flask for the backend and MySQL for data storage. Each user has their own pantry, shopping list, and favorites. When you search for recipes, it compares the recipe ingredients against your pantry to show you what you have and what you're missing.
 
-7. **Access the app**
-   - Open your browser and navigate to `http://localhost:5000`
-   - Register a new account and start managing your pantry!
+**Recipe Matching:**
+- Fetches your pantry ingredients
+- For each recipe, calculates how many ingredients you have
+- Ranks recipes by match percentage
+- Shows "Have" vs "Missing" for each recipe
 
----
+**Shopping List Intelligence:**
+- Aggregates duplicate ingredients
+- Tracks purchase status
+- Merges quantities when moving to pantry
 
-## 📁 Project Structure
+## Tech Stack
+
+**Backend:**
+- Flask 3.0 - web framework
+- MySQL - database
+- Werkzeug - password hashing
+- Google Gemini API - AI recipe generation
+
+**Frontend:**
+- HTML/CSS with Jinja2 templates
+- Vanilla JavaScript for interactions
+- Custom CSS with animations
+
+## Project Structure
 
 ```
 PantryWise/
-├── app.py                   # Main Flask application & routes
-├── db.py                    # Database connection & query functions
-├── requirements.txt         # Python dependencies
-├── schema.sql               # MySQL database schema
-├── queries.sql              # Sample SQL queries
-├── .env.example             # Environment variables template
-├── .gitignore               # Git ignore rules
-├── README.md                # This file
-│
-├── templates/               # Jinja2 HTML templates
-│   ├── base.html           # Base template with navbar
-│   ├── login.html          # Login page
-│   ├── register.html       # Registration page
-│   ├── home.html           # Dashboard with expiry alerts
-│   ├── pantry.html         # Pantry inventory management
-│   ├── recipes.html        # Recipe search & browse
-│   ├── recipe_detail.html  # Individual recipe view
-│   ├── shopping.html       # Shopping list
-│   ├── favourites.html     # Saved favorite recipes
-│   ├── history.html        # Recipe usage history
-│   ├── add_recipe.html     # Add new recipe form
-│   └── meal_plan.html      # Weekly meal planner
-│
-├── static/                  # Static assets
-│   └── styles.css          # Custom CSS with animations
-│
-└── data/                    # Data files (gitignored)
-    └── recipes.json        # Sample recipe data
+├── app.py              # Main Flask app and routes
+├── db.py               # Database connection and queries
+├── schema.sql          # Database schema
+├── requirements.txt    # Python dependencies
+├── .env.example        # Environment variables template
+├── templates/          # HTML templates
+│   ├── base.html
+│   ├── home.html
+│   ├── pantry.html
+│   ├── recipes.html
+│   └── ...
+└── static/
+    └── styles.css      # Custom styling
 ```
 
----
+## Database Schema
 
-## 🛠️ Tech Stack
+Core tables:
+- `users` - authentication and profiles
+- `ingredients` - master ingredient list
+- `recipes` - recipe details
+- `recipe_ingredients` - links recipes to ingredients
+- `pantry_items` - user's inventory
+- `shopping_list` - per-user shopping items
+- `favourites` - saved recipes
+- `recipe_history` - usage tracking
 
-### Backend
-- **Flask 3.0.0** - Lightweight Python web framework
-- **MySQL 8.0+** - Relational database
-- **mysql-connector-python** - Official MySQL driver
-- **Werkzeug** - Password hashing & security utilities
-- **python-dotenv** - Environment variable management
+All queries use parameterized statements to prevent SQL injection.
 
-### Frontend
-- **HTML5 & CSS3** - Semantic markup & modern styling
-- **Jinja2** - Server-side templating
-- **Vanilla JavaScript** - Interactive elements
-- **Google Fonts** - Custom typography
+## What I Learned
 
-### AI Integration
-- **Google Gemini API** - AI-powered recipe generation
-- **Markdown** - Safe rendering of AI-generated content
+Building this taught me:
+- Designing a relational database schema with proper foreign keys
+- Implementing user authentication and session management
+- Working with many-to-many relationships (recipes ↔ ingredients)
+- Building a recommendation system based on user data
+- Integrating third-party APIs (Google Gemini)
 
----
+## Known Issues
 
-## 🎯 Key Functionalities
+- Meal planner uses a greedy algorithm (not globally optimal)
+- Unit conversion table exists but isn't fully integrated yet
+- AI features require an API key
 
-### Pantry Management
-```python
-# Add item to pantry
-INSERT INTO pantry_items (user_id, ingredient_id, quantity, unit, expires_on)
-VALUES (?, ?, ?, ?, ?)
+## Future Improvements
 
-# Check expiring items (≤ 5 days)
-SELECT * FROM pantry_items 
-WHERE user_id = ? AND expires_on <= DATE_ADD(CURDATE(), INTERVAL 5 DAY)
-```
+Things I'd like to add:
+- Barcode scanning for adding pantry items
+- Nutritional information tracking
+- Recipe ratings and reviews
+- Better meal planning algorithm
+- Mobile app version
 
-### Recipe Matching Algorithm
-1. Fetch user's pantry ingredients
-2. For each recipe, calculate:
-   - **Have**: Ingredients in pantry
-   - **Missing**: Ingredients not in pantry
-   - **Match %**: (Have / Total) × 100
-3. Rank recipes by match percentage
+## Security Notes
 
-### Shopping List Intelligence
-- Aggregates duplicate ingredients
-- Tracks purchase status
-- One-click transfer to pantry with quantity merging
+- Passwords are hashed with Werkzeug
+- All database queries use parameterized statements
+- `.env` file keeps sensitive data out of version control
+- Session-based authentication
 
----
+## License
 
-## 📊 Database Schema Highlights
-
-### Core Tables
-- `users` - User authentication & profiles
-- `ingredients` - Master ingredient list
-- `recipes` - Recipe metadata (title, instructions, tags)
-- `recipe_ingredients` - Many-to-many recipe-ingredient mapping
-- `pantry_items` - User inventory with expiration tracking
-- `shopping_list` - Per-user shopping items
-- `favourites` - User-recipe favorites
-- `recipe_history` - Usage timestamps
-
-### Advanced Features
-- `unit_conversions` - Future-proof unit harmonization
-- Parameterized queries for SQL injection prevention
-- Foreign key constraints for data integrity
+MIT License - use this however you want for learning or your own projects.
 
 ---
 
-## 🎨 UI/UX Highlights
-
-- **Glassmorphism Cards** - Frosted glass effect with backdrop blur
-- **Gradient Backgrounds** - Dynamic color schemes
-- **Micro-Animations** - Smooth hover effects and transitions
-- **Responsive Design** - Mobile-friendly layouts
-- **Accessibility** - Semantic HTML and ARIA labels
-
----
-
-## 🔒 Security Features
-
-- ✅ Password hashing with Werkzeug's `generate_password_hash`
-- ✅ Parameterized SQL queries (no SQL injection)
-- ✅ Session-based authentication
-- ✅ Environment variable protection (`.env`)
-- ✅ CSRF protection ready (can integrate Flask-WTF)
-
----
-
-## 📈 Future Enhancements
-
-- [ ] Nutritional information tracking
-- [ ] Barcode scanning for pantry items
-- [ ] Recipe rating and reviews
-- [ ] Social sharing features
-- [ ] Mobile app (React Native)
-- [ ] Advanced meal planning with calorie tracking
-- [ ] Integration with grocery delivery APIs
-
----
-
-## 🐛 Known Issues
-
-- Meal planner uses greedy algorithm (not globally optimal)
-- Unit conversion table implemented but not fully integrated
-- AI recipe generation requires API key
-
----
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 👤 Author
-
-**Your Name**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- LinkedIn: [Your LinkedIn](https://linkedin.com/in/yourprofile)
-- Portfolio: [yourwebsite.com](https://yourwebsite.com)
-
----
-
-## 🙏 Acknowledgments
-
-- Built with [Flask](https://flask.palletsprojects.com/)
-- Database powered by [MySQL](https://www.mysql.com/)
-- AI features by [Google Gemini](https://ai.google.dev/)
-- Icons from [Font Awesome](https://fontawesome.com/)
-
----
-
-## 📸 Screenshots
-
-*Add screenshots of your application here!*
-
-### Dashboard
-![Dashboard](screenshots/dashboard.png)
-
-### Recipe Search
-![Recipe Search](screenshots/recipes.png)
-
-### Pantry Management
-![Pantry](screenshots/pantry.png)
-
----
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/yourusername/PantryWise/issues).
-
----
-
-**⭐ If you found this project helpful, please consider giving it a star!**
-
+Built as a learning project to practice full-stack development with Flask and MySQL.
